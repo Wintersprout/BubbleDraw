@@ -8,7 +8,7 @@ import java.awt.event.*;
 public class BubblePanel extends JPanel {
 	Random rand = new Random();
 	ArrayList<Bubble> bubbleList;
-	int size = 25;
+	int size = 20;
 	
 	public BubblePanel() {
 		bubbleList = new ArrayList<Bubble>();
@@ -43,10 +43,17 @@ public class BubblePanel extends JPanel {
 			repaint();
 		}
 		public void mouseWheelMoved(MouseWheelEvent e) {
-			if(System.getProperty("os.name").startsWith("Mac"))
+			/*if(System.getProperty("os.name").startsWith("Mac"))
 				size += e.getUnitsToScroll();
 			else
-				size -= e.getUnitsToScroll();
+				size -= e.getUnitsToScroll();*/
+			if (e.getWheelRotation() < 0)
+				size *= 2;
+			else
+				size /= 2;
+			
+			if (size < 2)
+				size = 2;
 		}
 	}
 	private class Bubble {
@@ -54,8 +61,8 @@ public class BubblePanel extends JPanel {
 		private Color color;
 		
 		public Bubble(int newX, int newY, int newSize) {
-			x = newX;
-			y = newY;
+			x = (newX / newSize) * newSize + newSize/2;
+			y = (newY / newSize) * newSize + newSize/2;
 			size = newSize;
 			color = new Color(rand.nextInt(256),
 					rand.nextInt(256),
@@ -63,7 +70,8 @@ public class BubblePanel extends JPanel {
 		}
 		public void draw(Graphics canvas) {
 			canvas.setColor(color);
-			canvas.fillOval(x - size/2, y - size/2, size, size);
+			//canvas.fillOval(x - size/2, y - size/2, size, size);
+			canvas.fillRect(x - size/2, y - size/2, size, size);
 		}
 	}
 	

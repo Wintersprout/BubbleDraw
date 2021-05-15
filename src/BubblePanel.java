@@ -3,6 +3,7 @@ import java.util.Random;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import javax.swing.JPanel;
+import java.awt.event.*;
 
 public class BubblePanel extends JPanel {
 	Random rand = new Random();
@@ -12,7 +13,10 @@ public class BubblePanel extends JPanel {
 	public BubblePanel() {
 		bubbleList = new ArrayList<Bubble>();
 		setBackground(Color.BLACK);
-		testBubbles();
+		//testBubbles();
+		addMouseListener(new BubbleListener());
+		addMouseMotionListener(new BubbleListener());
+		addMouseWheelListener(new BubbleListener());
 	}
 	public void paintComponent(Graphics canvas) {
 		super.paintComponent(canvas);
@@ -28,6 +32,22 @@ public class BubblePanel extends JPanel {
 			bubbleList.add(new Bubble(x, y, size));
 		}
 		repaint();
+	}
+	private class BubbleListener extends MouseAdapter {
+		public void mousePressed(MouseEvent e) {
+			bubbleList.add(new Bubble(e.getX(), e.getY(), size));
+			repaint();
+		}
+		public void mouseDragged(MouseEvent e) {
+			bubbleList.add(new Bubble(e.getX(), e.getY(), size));
+			repaint();
+		}
+		public void mouseWheelMoved(MouseWheelEvent e) {
+			if(System.getProperty("os.name").startsWith("Mac"))
+				size += e.getUnitsToScroll();
+			else
+				size -= e.getUnitsToScroll();
+		}
 	}
 	private class Bubble {
 		private int x, y, size;

@@ -4,19 +4,25 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 import javax.swing.JPanel;
 import java.awt.event.*;
+import javax.swing.Timer;
 
 public class BubblePanel extends JPanel {
 	Random rand = new Random();
 	ArrayList<Bubble> bubbleList;
 	int size = 25;
+	//Animation variables
+	Timer timer;
+	int delay = 20;
 	
 	public BubblePanel() {
+		timer = new Timer(delay, new BubbleListener());
 		bubbleList = new ArrayList<Bubble>();
-		setBackground(Color.BLACK);
+		setBackground(Color.WHITE);
 		//testBubbles();
 		addMouseListener(new BubbleListener());
 		addMouseMotionListener(new BubbleListener());
 		addMouseWheelListener(new BubbleListener());
+		timer.start();
 	}
 	public void paintComponent(Graphics canvas) {
 		super.paintComponent(canvas);
@@ -33,7 +39,7 @@ public class BubblePanel extends JPanel {
 		}
 		repaint();
 	}
-	private class BubbleListener extends MouseAdapter {
+	private class BubbleListener extends MouseAdapter implements ActionListener {
 		public void mousePressed(MouseEvent e) {
 			bubbleList.add(new Bubble(e.getX(), e.getY(), size));
 			repaint();
@@ -50,6 +56,11 @@ public class BubblePanel extends JPanel {
 			if (size < 3)
 				size = 3;
 		}
+		public void actionPerformed(ActionEvent e) {
+			for (Bubble b : bubbleList)
+				b.update();
+			repaint();
+		}
 	}
 	private class Bubble {
 		private int x, y, size;
@@ -61,11 +72,15 @@ public class BubblePanel extends JPanel {
 			size = newSize;
 			color = new Color(rand.nextInt(256),
 					rand.nextInt(256),
+					rand.nextInt(256),
 					rand.nextInt(256));
 		}
 		public void draw(Graphics canvas) {
 			canvas.setColor(color);
 			canvas.fillOval(x - size/2, y - size/2, size, size);
+		}
+		public void update() {
+			y -= 5;
 		}
 	}
 	

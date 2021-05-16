@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.swing.JPanel;
 import java.awt.event.*;
 import javax.swing.Timer;
+import javax.swing.JButton;
 
 public class BubblePanel extends JPanel {
 	Random rand = new Random();
@@ -17,7 +18,35 @@ public class BubblePanel extends JPanel {
 	public BubblePanel() {
 		timer = new Timer(delay, new BubbleListener());
 		bubbleList = new ArrayList<Bubble>();
-		setBackground(Color.WHITE);
+		setBackground(Color.BLACK);
+		
+		JPanel panel = new JPanel();
+		add(panel);
+		
+		JButton btnPause = new JButton("Pause");
+		btnPause.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JButton btn = (JButton) e.getSource();
+				if(btn.getText().equals("Pause")) {
+					timer.stop();
+					btn.setText("Start");
+				}
+				else {
+					timer.start();
+					btn.setText("Pause");
+				}
+			}
+		});
+		panel.add(btnPause);
+		
+		JButton btnClear = new JButton("Clear");
+		btnClear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				bubbleList = new ArrayList<Bubble>();
+				repaint();
+			}
+		});
+		panel.add(btnClear);
 		//testBubbles();
 		addMouseListener(new BubbleListener());
 		addMouseMotionListener(new BubbleListener());
@@ -64,6 +93,8 @@ public class BubblePanel extends JPanel {
 	}
 	private class Bubble {
 		private int x, y, size;
+		private int xSpeed, ySpeed;
+		private final int MAX_SPEED = 5; 
 		private Color color;
 		
 		public Bubble(int newX, int newY, int newSize) {
@@ -74,13 +105,16 @@ public class BubblePanel extends JPanel {
 					rand.nextInt(256),
 					rand.nextInt(256),
 					rand.nextInt(256));
+			xSpeed = rand.nextInt(MAX_SPEED * 2 + 1) - MAX_SPEED;
+			ySpeed = rand.nextInt(MAX_SPEED * 2 + 1) - MAX_SPEED;
 		}
 		public void draw(Graphics canvas) {
 			canvas.setColor(color);
 			canvas.fillOval(x - size/2, y - size/2, size, size);
 		}
 		public void update() {
-			y -= 5;
+			x += xSpeed;
+			y += ySpeed;
 		}
 	}
 	

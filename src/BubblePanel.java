@@ -6,6 +6,10 @@ import javax.swing.JPanel;
 import java.awt.event.*;
 import javax.swing.Timer;
 import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
 
 public class BubblePanel extends JPanel {
 	Random rand = new Random();
@@ -14,6 +18,8 @@ public class BubblePanel extends JPanel {
 	//Animation variables
 	Timer timer;
 	int delay = 20;
+	
+	JSlider slider;
 	
 	public BubblePanel() {
 		timer = new Timer(delay, new BubbleListener());
@@ -37,6 +43,26 @@ public class BubblePanel extends JPanel {
 				}
 			}
 		});
+		
+		JLabel lblSlider = new JLabel("Animation Speed");
+		panel.add(lblSlider);
+		
+		slider = new JSlider();
+		slider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				int speed = slider.getValue() + 1;
+				delay = 1000 / speed; //Converting the slider value to miliseconds
+				timer.setDelay(delay);
+			}
+		});
+		slider.setValue(60);
+		slider.setSnapToTicks(true);
+		slider.setPaintLabels(true);
+		slider.setMajorTickSpacing(30);
+		slider.setMinorTickSpacing(5);
+		slider.setPaintTicks(true);
+		slider.setMaximum(120);
+		panel.add(slider);
 		panel.add(btnPause);
 		
 		JButton btnClear = new JButton("Clear");
@@ -115,6 +141,10 @@ public class BubblePanel extends JPanel {
 		public void update() {
 			x += xSpeed;
 			y += ySpeed;
+			if(x - size/2 <= 0 || x + size/2 >= getWidth())
+				xSpeed = - xSpeed;
+			if(y - size/2 <= 0 || y + size/2 >= getHeight())
+				ySpeed = -ySpeed;
 		}
 	}
 	
